@@ -7,6 +7,7 @@ sys.setrecursionlimit(1000)
 from matplotlib.figure import Figure
 import tkinter as tk
 
+N=1024
 '''
     def drawing(self):
         self.title("Graph")
@@ -32,72 +33,73 @@ import tkinter as tk
         self.graph.draw()
 '''
 
-class func():
 
-    def sin(self,A=1, N=1024):
-        x = np.arange(0, 1024, 1)
-        y = np.array([A * np.sin(2 * np.pi * i / N) for i in x])
 
-        return x, y
+def sin(sl=1):
+    x = np.arange(0, N, 1)
+    y = np.array([sl * np.sin(2 * np.pi * i / N) for i in x])
+    y.tofile('sin',sep='\n')
+    return x, y
 
-    def dirac(self, gr=10, k=0, N=1024):
-        delta_n = 2 * gr / N
-        x = np.arange(-gr, gr, delta_n)
-        y = np.array([(i == k) for i in x])
+def dirac(gr=10, sl=0):
+    delta_n = 2 * gr / N
+    x = np.arange(-gr, gr, delta_n)
+    y = np.array([(i == sl) for i in x])
+    y.tofile('dirac',sep='\n')
+    return x, y
 
-        return x, y
+def heaviside(gr=10, sl=0):
+    delta_n = 2 * gr / N
+    x = np.arange(-gr, gr, delta_n)
+    y = np.array([(i >= sl) for i in x])
+    y.tofile('heav',sep='\n')
+    return x, y
 
-    def heaviside(self,gr=10, k=0, N=1024):
-        delta_n = 2 * gr / N
-        x = np.arange(-gr, gr, delta_n)
-        y = np.array([(i >= k) for i in x])
+def rand_signal(sl=0):
+    x = np.arange(0, N, 1)
+    y = np.array([np.random.sample(N)])
+    y.tofile('rand_sig',sep='\n')
+    return x, y
 
-        return x, y
+def rectangular(sl=2):
+    x = np.arange(0, N, 1)
+    y = np.array([(i < (N / sl)) for i in x])
+    y.tofile('rect',sep='\n')
+    return x, y
 
-    def rand_signal():
-        x = np.arange(0, 1024, 1)
-        y = np.random.sample(1024)
+def random_signal(sl=0):
+    x = np.arange(0, N, 1)
+    y = np.array([np.random.randint(0, 2, 1) for i in x])
+    y.tofile('random',sep='\n')
+    return x, y
 
-        return x, y
+def noise(fun=sin(),sl=1):
+    ns = np.random.normal(0, 0.1, N)
+    x, y = fun
+    y+=sl*ns
+    y.tofile('noise',sep='\n')
+    return x, y
 
-    def rectangular(self,S=2, N=1024):
-        x = np.arange(0, 1024, 1)
-        y = np.array([(i < (N / S)) for i in x])
+def radio_impulse(sl=1):
+    k = int(N / 3)
+    x = np.arange(0, N, 1)
+    y = np.where(x > k, sl * np.sin(5 * 2 * np.pi * x / k), 0) + np.where(x > 2 * k,
+                                                                             -sl * np.sin(2 * 5 * np.pi * x / k), 0)
 
-        return x, y
+    return x, y
 
-    def random_signal(self,N=1024):
-        x = np.arange(0, 1024, 1)
-        y = np.array([np.random.randint(0, 2, 1) for i in x])
-
-        return x, y
-
-    def noise(self,fun):
-        ns = np.random.normal(0, 0.1, 1024)
-        x, y = fun
-
-        return x, ns + y
-
-    def radio_impulse(self,N=1024, A=1):
-        k = int(1024 / 3)
-        x = np.arange(0, 1024, 1)
-        y = np.where(x > k, A * np.sin(5 * 2 * np.pi * x / k), 0) + np.where(x > 2 * k,
-                                                                             -A * np.sin(2 * 5 * np.pi * x / k), 0)
-
-        return x, y
-
-    def expon(self,q=5, N=1024, alpha=0.005):
-        x = np.arange(0, 1024, 1)
+def expon(q=5,  sl=0.005):
+    x = np.arange(0, N, 1)
         # y=np.array([q*np.exp(-alpha*i) for i in x])
-        y = np.array([q * np.exp(-alpha * i) * np.sin(10 * 2 * np.pi * i / N) for i in x])
+    y = np.array([q * np.exp(-sl * i) * np.sin(10 * 2 * np.pi * i / N) for i in x])
+    y.tofile('exp',sep='\n')
+    return x, y
 
-        return x, y
-
-    def predel(self,N=1024, A=1, k=7):
-        x = np.arange(-512, 512, 1)
-        y = np.array([(A * np.sin(2 * k * np.pi * i / N) * N) / (k * 2 * np.pi * i) for i in x])
-
-        return x, y
+def predel(sl=1, k=7):
+    x = np.arange(-512, 512, 1)
+    y = np.array([(sl * np.sin(2 * k * np.pi * i / N) * N) / (k * 2 * np.pi * i) for i in x])
+    y.tofile('pder',sep='\n')
+    return x, y
 
 
 
